@@ -1,0 +1,26 @@
+{
+  "name": "crypto-alert-bot",
+  "version": "1.0.0",
+  "description": "AI-powered crypto news alert bot with Telegram notifications and Shelby Protocol storage",
+  "scripts": {
+    "start": "python -m src.main",
+    "dev": "python -m src.main",
+    "test": "pytest"
+  },
+  "dependencies": {
+    "python-telegram-bot": "^21.0.0",
+    "httpx": "^0.27.0",
+    "feedparser": "^6.0.11",
+    "vaderSentiment": "^3.3.2",
+    "pandas": "^2.2.0",
+    "python-dotenv": "^1.0.0",
+    "ap_scheduler": "^3.10.0",
+    "requests": "^2.32.0",
+    "nltk": "^3.9.0",
+    "beautifulsoup4": "^4.12.0",
+    "dateutil": "^2.9.0"
+  },
+  "devDependencies": {
+    "pytest": "^8.0.0"
+  }
+}
