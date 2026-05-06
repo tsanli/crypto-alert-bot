@@ -60,6 +60,7 @@ Crypto Alert Bot monitors news from multiple sources, analyzes sentiment and imp
 - [x] **Shelby Protocol Storage** — Every alert stored as immutable blob
 - [x] **Rate Limiting** — Configurable max alerts per hour
 - [x] **Flexible Configuration** — Tokens, keywords, thresholds all configurable
+- [x] **Keyword Filters** — Route alerts based on keyword matching with exclusion support
 
 ---
 
@@ -214,7 +215,8 @@ crypto-alert-bot/
 │   ├── sentiment/
 │   │   └── analyzer.py      # Sentiment & impact analysis
 │   ├── alerts/
-│   │   └── dispatcher.py   # Telegram alert formatting & sending
+│   │   ├── dispatcher.py   # Telegram alert formatting & sending
+│   │   └── filters.py      # Keyword filter engine
 │   └── storage/
 │       └── shelby_store.py  # Shelby Protocol blob storage
 ├── data/                    # Local state & alert logs
@@ -255,6 +257,23 @@ Every alert stored as JSON blob on Shelby Protocol:
 - Full article metadata
 - Scores and detections
 - Message delivery status
+
+### 6. Keyword Filtering
+Before dispatch, articles are matched against configurable keyword filters:
+- **keywords**: All listed keywords must be present in the article
+- **exclude**: If any excluded keyword is found, the alert is filtered out
+- **label**: Optional label for the filter (for logging/debugging)
+
+Example filters:
+```json
+[
+  {"keywords": ["solana", "launch"], "exclude": ["bug", "hack", "scam"], "label": "Solana Launches"},
+  {"keywords": ["airdrop"], "exclude": ["ended", "expired"], "label": "Active Airdrops"},
+  {"keywords": ["token", "listing"], "exclude": ["delist"], "label": "New Listings"}
+]
+```
+
+Override default filters using `FILTER_CONFIG` environment variable.
 
 ---
 

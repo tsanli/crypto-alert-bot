@@ -13,6 +13,7 @@ from telegram.error import TelegramError
 from .news.sources import NewsArticle
 from .sentiment.analyzer import SentimentAnalyzer
 from .config import config
+from .filters import FilterEngine
 
 
 # Emoji mappings for sentiment
@@ -167,6 +168,8 @@ class AlertDispatcher:
         self.bot = Bot(token=bot_token)
         self.chat_id = chat_id
         self.formatter = AlertFormatter()
+        self.filter_engine = FilterEngine()
+        self.filter_engine.load_from_env()
         self.sent_count = 0
         self.last_reset = datetime.now()
         self.max_per_hour = config.alert.max_alerts_per_hour
@@ -182,6 +185,14 @@ class AlertDispatcher:
 
         if self.sent_count >= self.max_per_hour:
             print(f"Rate limit reached ({self.max_per_hour}/hour), skipping alert")
+            return False
+
+        # Build text from article for filtering
+        alert_text = f"{article.title} {article.description or ''}"
+        
+        # Check keyword filters before sending
+        if not self.filter_engine.should_dispatch(alert_text):
+            print(f"Filtered out: {article.title[:50]}...")
             return False
 
         try:
